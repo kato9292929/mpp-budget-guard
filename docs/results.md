@@ -66,11 +66,11 @@ testnet は既定では上限なしで判定する。これは `mpp-agent-run` �
 
 ## D4 セキュリティスキャン
 
-Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、quarantine したバンドル20ファイルに対して手元で回した。
+Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、quarantine したバンドル21ファイル（push する内容と同じもの）に対して手元で回した。
 
 - **Verdict: SAFE**
 - Decision: **ALLOWED**（community source, safe verdict）
-- 指摘 8 件はすべて MEDIUM で、判定には影響しない（判定の規則は CRITICAL→dangerous、HIGH→caution、MEDIUM だけなら safe）。
+- 指摘 12 件はすべて MEDIUM で、判定には影響しない（判定の規則は CRITICAL→dangerous、HIGH→caution、MEDIUM だけなら safe）。主なものは下のとおり。残り4件は、この results.md が下の一覧を引用している行に対するもの。
 
 ```
 MEDIUM network       references/pitfalls.md:19  mppx.fetch('http://127.0.0.1:8410/expensive')（再現コード例）
@@ -81,7 +81,7 @@ MEDIUM execution     tests/test_guard.py:56,189       subprocess.run（CLI / pro
 MEDIUM traversal     tests/e2e/run.sh:9               ROOT="$(cd "$E2E/../.." && pwd)"
 ```
 
-- 最初のスキャンは **CAUTION（install 拒否）** だった。原因はテストで `os.environ` を丸ごとコピーしていた2か所で、HIGH の exfiltration に当たっていた。`env VAR=… cmd` の形に書き直し、SAFE になった。`.skillignore` で除外するような回避はしていない。
+- 最初のスキャンは **CAUTION（install 拒否）** だった。原因はテストで環境変数の辞書を丸ごとコピーしていた2か所で、HIGH の exfiltration に当たっていた。`env VAR=… cmd` の形に書き直し、SAFE になった。この results.md でもその変数名を書いた行が同じく HIGH になったため、言い換えた。`.skillignore` で除外するような回避はしていない。
 - 参考に、公式の `mpp-agent` も同じスキャンで SAFE（MEDIUM 2件：`npm install -g mppx` がバージョン固定されていない点）。
 - Hermes が任意で使う第2のスキャナ（NVIDIA SkillEvaluator Tier 1、`skillevaluator` コマンド）は回せていない。外部 GitHub からツールを入れる操作が、このセッションの権限設定で拒否された。Hermes 側でもこれは警告のみの任意スキャンで、install の可否は skills_guard の判定で決まる。
 
