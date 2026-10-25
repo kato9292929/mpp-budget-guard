@@ -84,9 +84,29 @@ MEDIUM traversal     tests/e2e/run.sh:9               ROOT="$(cd "$E2E/../.." &&
 
 ## D5 GitHub からのインストール確認
 
-**未実施。** `kato9292929/mpp-budget-guard` が GitHub にまだ無く（このセッションの権限では作成できない）、push していないため。
+2026-10-25 11:45 UTC。push 後の `main`（`835e630`）を、新しい `HERMES_HOME` に Hermes 0.22.2 で入れた。`GITHUB_TOKEN`／`GH_TOKEN` は外し、認証なしで実行した。
 
-使う側のインストールコマンド（push 後に、どの形で入るかをここに確定させる）：
-- Hermes 0.22.2 の GitHub ソースは、識別子を `owner/repo/<スキルのパス>` として解釈する（`tools/skills_hub_github.py` の `_split_repo_id`）。
-- パスが空ならリポジトリのルートをスキルとして扱う。このため `kato9292929/mpp-budget-guard/`（末尾スラッシュ付き）が第1候補になる。
-- スラッシュ無しの `kato9292929/mpp-budget-guard` は、GitHub ソースでは区切りが2つしかなく解釈されない。push 後に、両方の形を新しい `HERMES_HOME` で実際に試して結果を書く。
+**使う側のインストールコマンド（末尾のスラッシュが必要）**
+
+```bash
+hermes skills install official/payments/mpp-agent      # 支払い役（公式）
+hermes skills install kato9292929/mpp-budget-guard/    # このスキル
+```
+
+| 識別子 | 結果 |
+|---|---|
+| `kato9292929/mpp-budget-guard/`（末尾スラッシュあり） | **成功**。`Installed: mpp-budget-guard`。監査ログは `INSTALL mpp-budget-guard skills.sh:community safe sha256:a52bb090a5f6885d` |
+| `kato9292929/mpp-budget-guard`（スラッシュなし） | **失敗**。`Error: Could not download 'kato9292929/mpp-budget-guard'.` |
+
+- 末尾スラッシュが要るのは、Hermes が GitHub 系の識別子を `owner/repo/<スキルのパス>` として読むため（`tools/skills_hub_github.py` の `_split_repo_id`）。スラッシュがあればパスが空になり、リポジトリのルートがスキルとして扱われる。実際の取得は skills.sh ソースが GitHub ソースを包んで行い、Upstream Metadata には `Repo: https://github.com/kato9292929/mpp-budget-guard` と出た。
+- 入ったファイル：SKILL.md、LICENSE、docs/、references/、scripts/（challenge.py、probe.sh）、tests/（18ファイル）。
+- インストール時のスキャン：safe。
+- スキル一覧：
+  ```
+  │ mpp-budget-guard │          │ skills.sh │ community │ enabled │
+  │ mpp-agent        │ payments │ official  │ official  │ enabled │
+  2 hub-installed, 0 builtin, 0 local — 2 enabled, 0 disabled
+  ```
+  カテゴリは空（`skills/mpp-budget-guard/` に入る）。分けたい場合は `--category payments` を付ける。
+- インストール先での動作確認：`python3 -m unittest discover -s tests` は OK（50件）。`probe.sh` → `challenge.py analyze` を Exa の `/search` に支払いなしで実行し、`allow`（$0.007, mainnet）と終了コード 0 を得た。
+- Hermes 0.19.0 以前を使っている場合は、インストール後に再起動するか `/reload-skills` を実行する（SKILL.md の Pitfalls 5）。

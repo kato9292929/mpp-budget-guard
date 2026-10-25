@@ -11,7 +11,7 @@ wallet key. Paying stays with the official `mpp-agent` skill
 
 ```bash
 hermes skills install official/payments/mpp-agent     # the payer (official)
-hermes skills install <identifier>                    # this guard; see docs/results.md D5
+hermes skills install kato9292929/mpp-budget-guard/   # this guard (the trailing slash is required)
 ```
 
 Then restart Hermes, or run `/reload-skills` (needed on Hermes ≤ 0.19.0).
