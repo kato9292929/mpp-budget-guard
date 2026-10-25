@@ -71,10 +71,10 @@ mainnet USDC `0x20C0…8b50` (chainId 4217) and Tempo testnet pathUSD `0x20c0…
    `python3 ${HERMES_SKILL_DIR}/scripts/challenge.py record --amount-usd <verdict.amount_usd> --tx <hash> --challenge-id <verdict.challenge_id> --url <url>`.
    The decision itself is already in `decision-log.jsonl` from step 2.
 
-`scripts/create-access-key.mjs` sets an on-chain Tempo limit (per-day amount,
-allowed recipients, expiry). It must be signed by the root key, so **the user runs
-it in their own terminal. Never run it yourself and never ask for or handle the
-key.** See `references/pitfalls.md` §4 for how it was tested.
+For a limit enforced on-chain as well (Tempo access key: per-period amount,
+allowed recipients, expiry), point the user to mpp.dev's guide, Managing agent
+spend (https://mpp.dev/guides/managing-agent-spend). Their wallet authorizes the key. This skill does not create keys and
+never asks for or handles one. See `references/pitfalls.md` §4 for what was observed with such a key.
 
 ## Pitfalls
 
@@ -117,4 +117,4 @@ Details and reproduction steps: `references/pitfalls.md`.
 - The balance: `mppx account view` (or your Tempo Wallet) before and after. In the
   testnet run, a 0.005 payment debited 5031 base units (the amount plus a fee).
 - The skill itself: `python3 -m unittest discover -s ${HERMES_SKILL_DIR}/tests` →
-  49 tests, OK.
+  50 tests, OK.

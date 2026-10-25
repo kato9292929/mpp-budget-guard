@@ -59,14 +59,11 @@
 
 testnet は既定では上限なしで判定する。これは `mpp-agent-run` の作業指示に合わせたもので、既存テスト34件にも含まれている。拒否1件を testnet で記録するため、`--cap-testnet` を付けた。
 
-あわせて `scripts/create-access-key.mjs` も testnet で試した。
-- 条件：上限 0.02 pathUSD/日、受取先1件、期限 +1日。
-- authorize の tx `0xd186b57374a34dd563d6f904988de8f41689cbdf28e44ccabe1468dca3a995bf` は success。
-- access key の秘密鍵は mode 0600 のファイルに保存し、画面には出していない。
+access key を作るスクリプト（`create-access-key.mjs`）は外した。ルートキーでの署名が要り、「スキルからは鍵を読まない」と両立しないため（2026-10-25 に本人が判断）。access key の作り方は、SKILL.md と references/pitfalls.md から mpp.dev の Managing agent spend（https://mpp.dev/guides/managing-agent-spend）にリンクしている。
 
 ## D4 セキュリティスキャン
 
-Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、quarantine したバンドル21ファイル（push する内容と同じもの）に対して手元で回した。
+Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、quarantine したバンドル18ファイル（push する内容と同じもの）に対して手元で回した。
 
 - **Verdict: SAFE**
 - Decision: **ALLOWED**（community source, safe verdict）

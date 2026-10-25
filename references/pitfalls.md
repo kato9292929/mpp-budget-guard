@@ -53,10 +53,11 @@ Returning `undefined` does not refuse; mppx then creates the credential and pays
 
 ## 4. Tempo access key: the fee appears to count toward the limit
 
-`scripts/create-access-key.mjs` calls viem `Actions.accessKey.authorize` with
-`limits: [{ token, limit, period }]`, a `scopes` recipient allowlist for TIP-20
-`transfer` / `transferWithMemo`, and `expiry`. No login is needed, only the root
-key's signature, which is why the user runs it, not the agent.
+This skill does not create access keys. How to authorize one from your wallet,
+with limits, scopes and recipients: mpp.dev, Managing agent spend (https://mpp.dev/guides/managing-agent-spend).
+The observation below comes from `mpp-agent-run/lab/accesskey.mjs`, which called viem
+`Actions.accessKey.authorize` with `limits: [{ token, limit, period }]`, a
+`scopes` recipient allowlist for TIP-20 `transfer` / `transferWithMemo`, and `expiry`.
 
 Observed on testnet with limit 0.01 pathUSD per 86400 s and a single allowed recipient:
 
@@ -70,7 +71,7 @@ Observed on testnet with limit 0.01 pathUSD per 86400 s and a single allowed rec
 debited 5048 rather than 5000. So the fee most likely counts toward the limit.
 This is **an inference** from these numbers. Size limits with headroom.
 
-The access key is used by the mppx **client library**
+In that test the access key was used through the mppx **client library**
 (`tempo({ account: Account.fromSecp256k1(key, { access: root }) })`). The mppx
 **CLI** 0.8.13 has no access-key option (no `accessKey` in `src/cli`).
 

@@ -23,9 +23,8 @@ Then restart Hermes, or run `/reload-skills` (needed on Hermes ≤ 0.19.0).
 | `SKILL.md` | When to Use / Quick Reference / Procedure / Pitfalls / Verification |
 | `scripts/probe.sh` | fetch a 402 without paying (default POST + JSON) |
 | `scripts/challenge.py` | decode MPP + x402, decide allow/deny, write the decision log and ledger (stdlib only) |
-| `scripts/create-access-key.mjs` | Tempo access key with a daily limit, recipient allowlist and expiry (**run by the user only**; needs `cd scripts && npm ci`) |
 | `references/pitfalls.md` | what was verified, with reproduction steps |
-| `tests/` | `python3 -m unittest discover -s tests` (49 tests); `tests/e2e/run.sh` is the testnet end-to-end run |
+| `tests/` | `python3 -m unittest discover -s tests` (50 tests); `tests/e2e/run.sh` is the testnet end-to-end run |
 | `docs/results.md` | test and install results (D1–D5) |
 
 This README lives in `docs/` because Hermes's skill linter flags a `README.md` shipped at the skill root.
@@ -33,9 +32,11 @@ This README lives in `docs/` because Hermes's skill linter flags a `README.md` s
 ## Requirements
 
 `bash`, `curl` and Python 3.10+ for `probe.sh` and `challenge.py`. Node.js 20+ only
-for `create-access-key.mjs` and the e2e harness. No environment variables or
-secrets are required; `MPP_BUDGET_GUARD_HOME` (default `~/.mpp-budget-guard`)
+for the e2e harness. The skill reads no key and needs no environment variables or
+secrets; `MPP_BUDGET_GUARD_HOME` (default `~/.mpp-budget-guard`)
 only moves the log directory.
+
+For on-chain limits (Tempo access keys), see mpp.dev, Managing agent spend: https://mpp.dev/guides/managing-agent-spend
 
 ## License
 
