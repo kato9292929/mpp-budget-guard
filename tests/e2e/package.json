@@ -1,0 +1,10 @@
+{
+  "name": "mpp-budget-guard-e2e",
+  "private": true,
+  "type": "module",
+  "description": "Tempo TESTNET end-to-end harness (local 402 server + mppx payer). Not part of the skill's runtime.",
+  "dependencies": {
+    "mppx": "0.8.13",
+    "viem": "2.57.7"
+  }
+}

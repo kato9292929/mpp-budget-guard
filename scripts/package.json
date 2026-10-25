@@ -1,0 +1,9 @@
+{
+  "name": "mpp-budget-guard-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Pinned dependency for create-access-key.mjs only. probe.sh and challenge.py need no npm packages.",
+  "dependencies": {
+    "viem": "2.57.7"
+  }
+}
