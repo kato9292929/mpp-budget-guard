@@ -17,7 +17,7 @@
 
 ## D2 Hermes 0.22.2 でのスキル一覧
 
-新しい `HERMES_HOME` を用意し、ローカルパス（`/home/user/mpp-budget-guard`）からこのスキルを入れた。`hermes skills install` にはローカルパスを渡す方法がないので、Hermes の hub install と同じ処理（quarantine → skills_guard スキャン → `install_from_quarantine`）をたどる `tests/hermes/local_install.py` を使った。そのあと公式の `mpp-agent` を `hermes skills install official/payments/mpp-agent` で入れた。
+新しい `HERMES_HOME` を用意し、ローカルパス（`/home/user/mpp-budget-guard/mpp-budget-guard`）からこのスキルを入れた。`hermes skills install` にはローカルパスを渡す方法がないので、Hermes の hub install と同じ処理（quarantine → skills_guard スキャン → `install_from_quarantine`）をたどる `tests/hermes/local_install.py` を使った。そのあと公式の `mpp-agent` を `hermes skills install official/payments/mpp-agent` で入れた。
 
 ```
 ┃ Name             ┃ Category ┃ Source   ┃ Trust     ┃ Status  ┃
@@ -32,7 +32,7 @@
 - 途中で見つけて直した点が3つある。
   - description に `: ` を入れると YAML として壊れ、スキルが一覧から消えた。カンマに変え、回帰テストを追加した。
   - インストールすると実行権限が落ちるので（mode 644）、`probe.sh` は `bash` 経由で呼ぶ形にした。
-  - linter がルートの `README.md` を指摘するので、`docs/README.md` に移した。
+  - スキルは `mpp-budget-guard/` サブディレクトリに置いている（理由は D5）。README とテストはリポジトリのルートにあり、インストールされない。
 
 ## D3 testnet での許可1件・拒否1件
 
@@ -63,50 +63,55 @@ access key を作るスクリプト（`create-access-key.mjs`）は外した。�
 
 ## D4 セキュリティスキャン
 
-Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、quarantine したバンドル18ファイル（push する内容と同じもの）に対して手元で回した。
+Hermes のスキルハブが install 時に使うのと同じスキャン（`tools/skills_guard.py` の `scan_skill`、source=community）を、インストールされる中身（`mpp-budget-guard/` の5ファイル：SKILL.md、LICENSE、references/pitfalls.md、scripts/challenge.py、scripts/probe.sh）に対して手元で回した。
 
 - **Verdict: SAFE**
 - Decision: **ALLOWED**（community source, safe verdict）
-- 指摘 12 件はすべて MEDIUM で、判定には影響しない（判定の規則は CRITICAL→dangerous、HIGH→caution、MEDIUM だけなら safe）。主なものは下のとおり。残り4件は、この results.md が下の一覧を引用している行に対するもの。
+- 指摘は3件で、すべて MEDIUM。判定には影響しない（判定の規則は CRITICAL→dangerous、HIGH→caution、MEDIUM だけなら safe）。
 
 ```
 MEDIUM network       references/pitfalls.md:19  mppx.fetch('http://127.0.0.1:8410/expensive')（再現コード例）
 MEDIUM network       references/pitfalls.md:33  （同上のコメント）
 MEDIUM supply_chain  references/pitfalls.md:19  （同上）
-MEDIUM execution     tests/test_challenge.py:230,239  subprocess.run（CLI テスト）
-MEDIUM execution     tests/test_guard.py:56,189       subprocess.run（CLI / probe.sh テスト）
-MEDIUM traversal     tests/e2e/run.sh:9               ROOT="$(cd "$E2E/../.." && pwd)"
 ```
 
+- GitHub から入れたときのインストール時スキャンも、0.19.0／0.22.2 ともに safe（D5）。
+- linter の指摘は 0 件。
 - 最初のスキャンは **CAUTION（install 拒否）** だった。原因はテストで環境変数の辞書を丸ごとコピーしていた2か所で、HIGH の exfiltration に当たっていた。`env VAR=… cmd` の形に書き直し、SAFE になった。この results.md でもその変数名を書いた行が同じく HIGH になったため、言い換えた。`.skillignore` で除外するような回避はしていない。
 - 参考に、公式の `mpp-agent` も同じスキャンで SAFE（MEDIUM 2件：`npm install -g mppx` がバージョン固定されていない点）。
 - Hermes が任意で使う第2のスキャナ（NVIDIA SkillEvaluator Tier 1、`skillevaluator` コマンド）は回せていない。外部 GitHub からツールを入れる操作が、このセッションの権限設定で拒否された。Hermes 側でもこれは警告のみの任意スキャンで、install の可否は skills_guard の判定で決まる。
 
 ## D5 GitHub からのインストール確認
 
-2026-10-25 11:45 UTC。push 後の `main`（`835e630`）を、新しい `HERMES_HOME` に Hermes 0.22.2 で入れた。`GITHUB_TOKEN`／`GH_TOKEN` は外し、認証なしで実行した。
+push 後の `main` を、Hermes 0.19.0（2026.7.20）と 0.22.2（2026.9.24）のそれぞれで、新しい `HERMES_HOME` に入れた。`GITHUB_TOKEN`／`GH_TOKEN` は外し、認証なしで実行した。
 
-**使う側のインストールコマンド（末尾のスラッシュが必要）**
+**使う側のインストールコマンド**
 
 ```bash
-hermes skills install official/payments/mpp-agent      # 支払い役（公式）
-hermes skills install kato9292929/mpp-budget-guard/    # このスキル
+hermes skills install official/payments/mpp-agent                   # 支払い役（公式）
+hermes skills install kato9292929/mpp-budget-guard/mpp-budget-guard  # このスキル
 ```
 
-| 識別子 | 結果 |
-|---|---|
-| `kato9292929/mpp-budget-guard/`（末尾スラッシュあり） | **成功**。`Installed: mpp-budget-guard`。監査ログは `INSTALL mpp-budget-guard skills.sh:community safe sha256:a52bb090a5f6885d` |
-| `kato9292929/mpp-budget-guard`（スラッシュなし） | **失敗**。`Error: Could not download 'kato9292929/mpp-budget-guard'.` |
+| 識別子 | 0.19.0 | 0.22.2 |
+|---|---|---|
+| `kato9292929/mpp-budget-guard/mpp-budget-guard` | **成功**。SKILL.md、references/pitfalls.md、scripts/challenge.py、scripts/probe.sh が入った | **成功**（上と同じファイルに加えて LICENSE） |
+| `kato9292929/mpp-budget-guard/`（旧レイアウトのとき） | 失敗：`Could not fetch … from any source.`（本人の Mac でも同じエラー） | 成功していた |
+| `kato9292929/mpp-budget-guard` | 失敗 | 失敗 |
 
-- 末尾スラッシュが要るのは、Hermes が GitHub 系の識別子を `owner/repo/<スキルのパス>` として読むため（`tools/skills_hub_github.py` の `_split_repo_id`）。スラッシュがあればパスが空になり、リポジトリのルートがスキルとして扱われる。実際の取得は skills.sh ソースが GitHub ソースを包んで行い、Upstream Metadata には `Repo: https://github.com/kato9292929/mpp-budget-guard` と出た。
-- 入ったファイル：SKILL.md、LICENSE、docs/、references/、scripts/（challenge.py、probe.sh）、tests/（18ファイル）。
-- インストール時のスキャン：safe。
-- スキル一覧：
-  ```
-  │ mpp-budget-guard │          │ skills.sh │ community │ enabled │
-  │ mpp-agent        │ payments │ official  │ official  │ enabled │
-  2 hub-installed, 0 builtin, 0 local — 2 enabled, 0 disabled
-  ```
-  カテゴリは空（`skills/mpp-budget-guard/` に入る）。分けたい場合は `--category payments` を付ける。
-- インストール先での動作確認：`python3 -m unittest discover -s tests` は OK（50件）。`probe.sh` → `challenge.py analyze` を Exa の `/search` に支払いなしで実行し、`allow`（$0.007, mainnet）と終了コード 0 を得た。
-- Hermes 0.19.0 以前を使っている場合は、インストール後に再起動するか `/reload-skills` を実行する（SKILL.md の Pitfalls 5）。
+**経緯（2026-10-28）**
+
+1. 最初はスキルをリポジトリのルートに置き、`kato9292929/mpp-budget-guard/` で入れていた。これは 0.22.2 でしか動かなかった。
+   - 0.19.0 は識別子から `<パス>/SKILL.md` を組み立てる。ルートだとパスが空になり `/SKILL.md` を取りに行って失敗する。
+   - 本人の Mac で出たエラーも同じものだった。
+2. 対策として、スキルを `mpp-budget-guard/` サブディレクトリに移した。`owner/repo/<ディレクトリ>` はどちらの版でも使える標準の形。
+3. 移したあと、0.19.0 では SKILL.md と pitfalls.md しか入らなかった。
+   - 0.19.0 は、SKILL.md の中でバッククォートか空白の直後に書かれたパスだけを付属ファイルとして取り込む。
+   - `${HERMES_SKILL_DIR}/scripts/…` という書き方は、この条件に当たらない。
+   - SKILL.md の Quick Reference に「Bundled」行を足して `` `scripts/probe.sh` `` などを明記したところ、scripts/ も入った。
+
+**インストール後の確認（両方の版）**
+- スキル一覧：`│ mpp-budget-guard │ │ skills.sh │ community │ enabled │`
+- インストール時のスキャン：safe
+- インストール先の `scripts/probe.sh` → `scripts/challenge.py analyze` を Exa の `/search` に支払いなしで実行し、`verdict: allow` になった。
+- `mpp-agent` は 0.19.0 には含まれていない（`official/payments/mpp-agent` は Hermes 2026.8 以降の optional skill）。0.22.2 では一覧に `mpp-agent` と `mpp-budget-guard` が並ぶ（D2）。
+- Hermes 0.19.0 以前で動いているチャットに入れた場合は、再起動するか `/reload-skills` を実行する（SKILL.md の Pitfalls 5）。
