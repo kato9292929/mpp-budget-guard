@@ -45,6 +45,7 @@ inference, it says so.
 | Probe (no payment) | `bash ${HERMES_SKILL_DIR}/scripts/probe.sh <url> [--method GET] [--data '<json>']` | last stdout line = capture path; exit 0 only on HTTP 402 |
 | Decide | `python3 ${HERMES_SKILL_DIR}/scripts/challenge.py analyze <capture> [--per-request-cap 0.10] [--total-cap 0.50]` | JSON with `verdict`; exit 0 allow, 3 deny, 2 undecodable |
 | Record a payment | `python3 ${HERMES_SKILL_DIR}/scripts/challenge.py record --amount-usd <usd> --tx <hash> [--network mainnet]` | appends to the ledger used for the total cap |
+| Bundled | `scripts/probe.sh`, `scripts/challenge.py`, `references/pitfalls.md` | all under `${HERMES_SKILL_DIR}` |
 | Files | `~/.mpp-budget-guard/decision-log.jsonl`, `spend-ledger.jsonl`, `probes/` | override the directory with `MPP_BUDGET_GUARD_HOME` |
 
 Defaults: $0.10 per request, $0.50 total (mainnet ledger). Testnet challenges
