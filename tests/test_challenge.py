@@ -14,7 +14,7 @@ import unittest
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "scripts"))
+sys.path.insert(0, os.path.join(HERE, "..", "mpp-budget-guard", "scripts"))
 
 from challenge import (KNOWN_CURRENCIES, analyze, decide, ledger_append,  # noqa: E402
                        ledger_spent_usd, parse_payment_header, parse_payment_headers,
@@ -227,7 +227,7 @@ class Ledger(unittest.TestCase):
 
 class Cli(unittest.TestCase):
     def test_legacy_cli_accepts_payment_form(self):
-        out = subprocess.run([sys.executable, os.path.join(HERE, "..", "scripts", "challenge.py"),
+        out = subprocess.run([sys.executable, os.path.join(HERE, "..", "mpp-budget-guard", "scripts", "challenge.py"),
                               hdr(expires="2099-01-01T00:00:00Z"), "0"],
                              capture_output=True, text=True, check=True).stdout
         j = json.loads(out)
@@ -236,7 +236,7 @@ class Cli(unittest.TestCase):
     def test_analyze_cli_writes_log(self):
         with tempfile.TemporaryDirectory() as d:
             log = os.path.join(d, "decisions.jsonl")
-            subprocess.run([sys.executable, os.path.join(HERE, "..", "scripts", "challenge.py"),
+            subprocess.run([sys.executable, os.path.join(HERE, "..", "mpp-budget-guard", "scripts", "challenge.py"),
                             "analyze", EXA, "--ledger", os.path.join(d, "none.jsonl"),
                             "--now", "2026-10-20T05:43:00Z", "--log", log, "--mask"],
                            capture_output=True, text=True, check=True)

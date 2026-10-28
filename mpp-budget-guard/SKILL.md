@@ -116,5 +116,5 @@ Details and reproduction steps: `references/pitfalls.md`.
 - The tx on chain: look the hash up on the Tempo explorer for that network.
 - The balance: `mppx account view` (or your Tempo Wallet) before and after. In the
   testnet run, a 0.005 payment debited 5031 base units (the amount plus a fee).
-- The skill itself: `python3 -m unittest discover -s ${HERMES_SKILL_DIR}/tests` →
-  50 tests, OK.
+- The skill itself: the tests are not installed with the skill. In a checkout of
+  https://github.com/kato9292929/mpp-budget-guard, `python3 -m unittest discover -s tests` → 50 tests, OK.

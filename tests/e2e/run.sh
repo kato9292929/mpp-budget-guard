@@ -27,10 +27,10 @@ for ROUTE in /cheap /expensive; do
     echo "=== $ROUTE"
     BEFORE="$(node "$E2E/wallet.mjs" payer --balance-only | json 'd["pathUSD"]')"
     # 1. probe (default POST + JSON)
-    CAPTURE="$(NO_PROXY=127.0.0.1 no_proxy=127.0.0.1 "$ROOT/scripts/probe.sh" "$URL" | tail -1)"
+    CAPTURE="$(NO_PROXY=127.0.0.1 no_proxy=127.0.0.1 "$ROOT/mpp-budget-guard/scripts/probe.sh" "$URL" | tail -1)"
     # 2. decide
     set +e
-    DECISION="$(python3 "$ROOT/scripts/challenge.py" analyze "$CAPTURE" --cap-testnet)"; RC=$?
+    DECISION="$(python3 "$ROOT/mpp-budget-guard/scripts/challenge.py" analyze "$CAPTURE" --cap-testnet)"; RC=$?
     set -e
     printf '%s' "$DECISION" | json 'json.dumps(d["verdict"])'
     if [ "$RC" -ne 0 ]; then
@@ -44,7 +44,7 @@ for ROUTE in /cheap /expensive; do
         echo "$PAID"
         TX="$(printf '%s' "$PAID" | json 'd["receipt"]["reference"]')"
         # 4. record
-        python3 "$ROOT/scripts/challenge.py" record --network testnet --amount-usd "$AMOUNT_USD" \
+        python3 "$ROOT/mpp-budget-guard/scripts/challenge.py" record --network testnet --amount-usd "$AMOUNT_USD" \
             --tx "$TX" --challenge-id "$CID" --url "$URL"
     fi
     AFTER="$(node "$E2E/wallet.mjs" payer --balance-only | json 'd["pathUSD"]')"

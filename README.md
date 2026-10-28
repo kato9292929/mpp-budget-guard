@@ -11,7 +11,7 @@ wallet key. Paying stays with the official `mpp-agent` skill
 
 ```bash
 hermes skills install official/payments/mpp-agent     # the payer (official)
-hermes skills install kato9292929/mpp-budget-guard/   # this guard (the trailing slash is required)
+hermes skills install kato9292929/mpp-budget-guard/mpp-budget-guard   # this guard
 ```
 
 Then restart Hermes, or run `/reload-skills` (needed on Hermes ≤ 0.19.0).
@@ -20,14 +20,14 @@ Then restart Hermes, or run `/reload-skills` (needed on Hermes ≤ 0.19.0).
 
 | path | what |
 |---|---|
-| `SKILL.md` | When to Use / Quick Reference / Procedure / Pitfalls / Verification |
-| `scripts/probe.sh` | fetch a 402 without paying (default POST + JSON) |
-| `scripts/challenge.py` | decode MPP + x402, decide allow/deny, write the decision log and ledger (stdlib only) |
-| `references/pitfalls.md` | what was verified, with reproduction steps |
-| `tests/` | `python3 -m unittest discover -s tests` (50 tests); `tests/e2e/run.sh` is the testnet end-to-end run |
+| `mpp-budget-guard/SKILL.md` | the skill (this directory is what gets installed): When to Use / Quick Reference / Procedure / Pitfalls / Verification |
+| `mpp-budget-guard/scripts/probe.sh` | fetch a 402 without paying (default POST + JSON) |
+| `mpp-budget-guard/scripts/challenge.py` | decode MPP + x402, decide allow/deny, write the decision log and ledger (stdlib only) |
+| `mpp-budget-guard/references/pitfalls.md` | what was verified, with reproduction steps |
+| `tests/` | not installed; `python3 -m unittest discover -s tests` (50 tests); `tests/e2e/run.sh` is the testnet end-to-end run |
 | `docs/results.md` | test and install results (D1–D5) |
 
-This README lives in `docs/` because Hermes's skill linter flags a `README.md` shipped at the skill root.
+The skill lives in the `mpp-budget-guard/` subdirectory, so it installs on older Hermes versions too. Hermes 0.19.0 cannot install a skill whose SKILL.md is at the repository root.
 
 ## Requirements
 

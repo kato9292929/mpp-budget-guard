@@ -16,7 +16,7 @@ import unittest
 from datetime import datetime, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SCRIPTS = os.path.join(HERE, "..", "scripts")
+SCRIPTS = os.path.join(HERE, "..", "mpp-budget-guard", "scripts")
 sys.path.insert(0, SCRIPTS)
 
 from challenge import analyze, read_http_file  # noqa: E402
@@ -154,7 +154,7 @@ class SkillFrontmatter(unittest.TestCase):
     contain ': ', and the index truncates descriptions past 60 characters."""
 
     def test_frontmatter(self):
-        with open(os.path.join(HERE, "..", "SKILL.md"), encoding="utf-8") as f:
+        with open(os.path.join(HERE, "..", "mpp-budget-guard", "SKILL.md"), encoding="utf-8") as f:
             text = f.read()
         self.assertTrue(text.startswith("---\n"))
         fm = dict(line.split(": ", 1) for line in text.split("---\n")[1].splitlines()

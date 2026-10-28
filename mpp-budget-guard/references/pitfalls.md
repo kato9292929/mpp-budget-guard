@@ -8,7 +8,7 @@ author's `mpp-agent-run/lab` (gates.mjs, accesskey.mjs, mcp-server.mjs,
 hermes/skill_cache_repro.py, hermes/mcp_call.py). Minimal versions are below.
 
 Common setup for 1–4: a local mppx server on testnet that issues `tempo` charges
-(this repo's `tests/e2e/server.mjs`, routes `/cheap` 0.005 and `/expensive` 0.25),
+(`tests/e2e/server.mjs` in https://github.com/kato9292929/mpp-budget-guard, routes `/cheap` 0.005 and `/expensive` 0.25),
 and a payer funded from the testnet faucet (`tests/e2e/wallet.mjs payer`).
 
 ## 1. `maxAmount` is ignored for the Tempo method
