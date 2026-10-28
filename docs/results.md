@@ -109,6 +109,19 @@ hermes skills install kato9292929/mpp-budget-guard/mpp-budget-guard  # このス
    - `${HERMES_SKILL_DIR}/scripts/…` という書き方は、この条件に当たらない。
    - SKILL.md の Quick Reference に「Bundled」行を足して `` `scripts/probe.sh` `` などを明記したところ、scripts/ も入った。
 
+**本人の Mac での確認（2026-10-28 09:42 UTC）**
+
+`hermes skills install kato9292929/mpp-budget-guard/mpp-budget-guard` が成功した。
+- スキャン：SAFE、ALLOWED（MEDIUM 3件はいずれも references/pitfalls.md のコード例）。
+- 取得元：`https://github.com/kato9292929/mpp-budget-guard/tree/5da6e18…/mpp-budget-guard`
+- 入ったファイル：SKILL.md、references/pitfalls.md、scripts/challenge.py、scripts/probe.sh
+
+```
+% hermes skills list | grep mpp
+│ mpp-budget-guard     │                     │ skills.sh │ community │ enabled │
+│ mpp-agent            │ payments            │ official  │ official  │ enabled │
+```
+
 **インストール後の確認（両方の版）**
 - スキル一覧：`│ mpp-budget-guard │ │ skills.sh │ community │ enabled │`
 - インストール時のスキャン：safe
